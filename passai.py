@@ -14,12 +14,6 @@ DIFICULDADES = (
 FREQUENCIAS = ("Uma vez", "Mais de uma vez", "Não sei informar")
 ORIGENS = ("Relato informado", "Fonte pública", "Exemplo fictício")
 SITUACOES = ("Preparada", "Encaminhada", "Resposta recebida", "Encerrada")
-TRANSICOES_SITUACAO = {
-    "Preparada": ("Encaminhada", "Encerrada"),
-    "Encaminhada": ("Resposta recebida", "Encerrada"),
-    "Resposta recebida": ("Encerrada",),
-    "Encerrada": (),
-}
 REGRAS_ANALISE = {
     DIFICULDADES[0]: "Avaliação do tempo destinado à travessia de pedestres.",
     DIFICULDADES[1]: "Avaliação das condições de acesso à faixa, incluindo rampas e obstáculos.",
@@ -408,7 +402,7 @@ def registrar_relato(base):
             nova["locais"] = base["locais"] + [local]
             nova["proximo_local_id"] += 1
         if aplicar_alteracao(base, nova):
-            print(f"Relato {relato['id']:03d} registrado. Analise o local na opção 5.")
+            print(f"Relato {relato['id']:03d} registrado. Gere o pedido na opção 5 quando estiver pronto.")
 
 
 def exibir_relato(relato):
@@ -615,37 +609,40 @@ def exibir_pedido(pedido):
 
 
 def preparar_solicitacao(base):
+    """Gera um texto de pedido a partir das dificuldades de um local."""
     local = selecionar_local(base, selecionar_unico=True)
     if local is None:
         return
     analise = analisar_local(base, local)
-    print(f"\nANÁLISE DOS RELATOS — {local['descricao']}")
-    for dificuldade, total in analise["contagem"].items():
-        print(f"{total} registro(s): {dificuldade}")
-    for ponto in analise["pontos"]:
-        print(f"Pedido sugerido: {ponto}")
     ativo = solicitacao_ativa(base, local["id"])
     if ativo is not None and ativo["situacao"] != "Preparada":
-        print("Já existe solicitação encaminhada ou respondida. Acompanhe-a na opção 6.")
+        print(f"\nJá existe um pedido em andamento para este local: {ativo['situacao']}.")
         if not conteudo_atualizado(base, ativo):
-            print("Há alterações nos relatos/local que não constam no texto anteriormente preparado.")
-        exibir_pedido(ativo)
+            print("Há dificuldades novas ou alteradas que não fazem parte do pedido enviado.")
+        print("Use a opção 6 para registrar o próximo passo desse pedido.")
         return
+
     if analise["pendencias"]:
+        print("\nAntes de gerar o pedido, complete estas informações:")
         for pendencia in analise["pendencias"]:
-            print(f"Pendente: {pendencia}")
+            print(f"- {pendencia}")
         if not local["referencia_confirmada"] and confirmar("Deseja completar a referência agora?"):
             local = completar_local(base, local) or local
             analise = analisar_local(base, local)
         if analise["pendencias"]:
-            print("Complete as informações indicadas antes de preparar o pedido.")
+            print("O pedido não foi criado. Corrija as pendências e tente novamente.")
             return
+
     texto = gerar_solicitacao(local, analise)
-    print("\nPRÉVIA DO PEDIDO\n" + texto)
     if ativo is not None and conteudo_atualizado(base, ativo):
-        print(f"Este conteúdo já está salvo na solicitação {ativo['id']:03d}. Registre o envio na opção 6 após encaminhá-lo.")
+        print(f"\nO pedido {ativo['id']:03d} já está atualizado e pronto para copiar.")
+        exibir_pedido(ativo)
+        print("Depois de enviá-lo, use a opção 6 para registrar o envio.")
         return
-    if not confirmar("Salvar o pedido como preparado" + (", atualizando o rascunho existente?" if ativo else "?")):
+
+    print("\nTEXTO DO PEDIDO\n" + texto)
+    pergunta = "Atualizar o pedido salvo com este texto?" if ativo else "Salvar este pedido?"
+    if not confirmar(pergunta):
         return
     pedido = ativo.copy() if ativo else {"id": base["proxima_solicitacao_id"], "local_id": local["id"],
                                         "situacao": "Preparada", "protocolo": "", "historico": []}
@@ -657,54 +654,120 @@ def preparar_solicitacao(base):
     if ativo is None:
         nova["proxima_solicitacao_id"] += 1
     if aplicar_alteracao(base, nova):
-        print(f"Solicitação {pedido['id']:03d} preparada. O envio é feito por você fora do programa.")
+        print(f"Pedido {pedido['id']:03d} salvo e pronto para copiar.")
+        print("O programa não envia o pedido. Depois do envio, use a opção 6.")
 
 
-def atualizar_andamento(base):
+def selecionar_solicitacao(base):
     if not base["solicitacoes"]:
-        print("Nenhuma solicitação preparada. Use a opção 5 primeiro.")
-        return
-    escolha = ler_opcao("Escolha uma solicitação:", [f"{p['id']:03d} — {p['local_descricao']} | {p['situacao']}" for p in base["solicitacoes"]])
+        print("Nenhum pedido salvo. Use a opção 5 primeiro.")
+        return None
+    if len(base["solicitacoes"]) == 1:
+        pedido = base["solicitacoes"][0]
+        print(f"\nPedido selecionado: {pedido['id']:03d} — {pedido['local_descricao']}")
+        return pedido
+    opcoes = [f"{p['id']:03d} — {p['local_descricao']} | {p['situacao']}" for p in base["solicitacoes"]]
+    escolha = ler_opcao("Escolha o pedido:", opcoes)
     if escolha == 0:
+        return None
+    return base["solicitacoes"][escolha - 1]
+
+
+def salvar_andamento(base, pedido, situacao, protocolo, observacao):
+    alterado = {
+        **pedido,
+        "situacao": situacao,
+        "protocolo": protocolo,
+        "historico": pedido["historico"] + [{
+            "situacao": situacao,
+            "protocolo": protocolo,
+            "observacao": observacao,
+        }],
+    }
+    nova = base.copy()
+    nova["solicitacoes"] = substituir(base["solicitacoes"], alterado)
+    return aplicar_alteracao(base, nova)
+
+
+def registrar_envio_ou_resposta(base):
+    """Mostra somente a próxima ação possível para o pedido escolhido."""
+    pedido = selecionar_solicitacao(base)
+    if pedido is None:
         return
-    pedido = base["solicitacoes"][escolha - 1]
-    exibir_pedido(pedido)
-    for numero, evento in enumerate(pedido["historico"], start=1):
-        print(f"{numero}. {evento['situacao']} | Protocolo: {evento['protocolo'] or 'Não informado'} | {evento['observacao']}")
-    if pedido["situacao"] == "Encerrada":
-        print("Histórico encerrado. Se necessário, prepare uma nova solicitação na opção 5.")
-        return
-    destinos = TRANSICOES_SITUACAO[pedido["situacao"]]
-    opcoes = [f"Registrar: {estado}" for estado in destinos] + ["Adicionar observação sem mudar a situação"]
-    acao = ler_opcao("Como deseja atualizar?", opcoes)
-    if acao == 0:
-        return
-    situacao = destinos[acao - 1] if acao <= len(destinos) else pedido["situacao"]
-    if situacao == "Encaminhada" and pedido["situacao"] == "Preparada":
+
+    print(f"Situação atual: {pedido['situacao']}")
+    print(f"Protocolo: {pedido['protocolo'] or 'Não informado'}")
+
+    if pedido["situacao"] == "Preparada":
+        print("\nPróximo passo: enviar o texto do pedido pelo canal de atendimento escolhido.")
+        exibir_pedido(pedido)
+        if not confirmar("Você já enviou este pedido?"):
+            print("Nenhuma alteração foi feita.")
+            return
         if not conteudo_atualizado(base, pedido):
-            print("O rascunho está desatualizado. Revise e prepare o texto atual na opção 5 antes do envio.")
+            print("O pedido salvo não contém as alterações mais recentes.")
+            print("Atualize o texto na opção 5 antes de registrar o envio.")
             return
         ficticio = any(r["origem"] == "Exemplo fictício" for r in pedido["relatos_snapshot"])
-        pergunta = "Registrar encaminhamento fictício somente para testar o acompanhamento?" if ficticio else "Você já encaminhou esse texto pelo canal de atendimento escolhido?"
-        if not confirmar(pergunta):
+        if ficticio and not confirmar("Registrar apenas um envio fictício para a demonstração?"):
             return
-    if situacao == "Encerrada":
-        print("Encerrar finaliza o acompanhamento; não comprova que o problema foi resolvido.")
-    protocolo = pedido["protocolo"]
-    if situacao in ("Encaminhada", "Resposta recebida"):
-        protocolo = ler_texto("Protocolo fornecido pelo atendimento, se houver:", "2026-001234", False, pedido["protocolo"])
+        protocolo = ler_texto(
+            "Informe o protocolo recebido, se houver:",
+            "2026-001234",
+            False,
+        )
         if protocolo is None:
             return
-    observacao = ler_texto("Registre o que mudou:", obrigatorio=situacao == "Encerrada")
-    if observacao is None:
+        observacao = "Envio registrado pelo usuário."
+        if ficticio:
+            observacao = "Envio fictício registrado para demonstração."
+        if salvar_andamento(base, pedido, "Encaminhada", protocolo, observacao):
+            print("Envio registrado. Agora o pedido está aguardando resposta.")
         return
-    print(f"Novo andamento: {situacao} | Protocolo: {protocolo or 'Não informado'}")
-    if confirmar("Salvar atualização?"):
-        alterado = {**pedido, "situacao": situacao, "protocolo": protocolo,
-            "historico": pedido["historico"] + [{"situacao": situacao, "protocolo": protocolo, "observacao": observacao}]}
-        nova = base.copy()
-        nova["solicitacoes"] = substituir(base["solicitacoes"], alterado)
-        aplicar_alteracao(base, nova)
+
+    if pedido["situacao"] == "Encaminhada":
+        print("\nPróximo passo: registrar a resposta recebida.")
+        if not confirmar("Você recebeu uma resposta?"):
+            print("Nenhuma alteração foi feita. O pedido continua aguardando resposta.")
+            return
+        resposta = ler_texto(
+            "Resuma a resposta recebida:",
+            "O órgão informou que fará uma vistoria no local.",
+        )
+        if resposta is None:
+            return
+        protocolo = ler_texto(
+            "Atualize o protocolo, se necessário:",
+            "2026-001234",
+            False,
+            pedido["protocolo"],
+        )
+        if protocolo is None:
+            return
+        if salvar_andamento(base, pedido, "Resposta recebida", protocolo, resposta):
+            print("Resposta salva. Consulte o retorno e encerre quando não houver mais ações.")
+        return
+
+    if pedido["situacao"] == "Resposta recebida":
+        ultimo_evento = pedido["historico"][-1]
+        print(f"\nÚltima resposta registrada: {ultimo_evento['observacao']}")
+        if not confirmar("Deseja encerrar o acompanhamento deste pedido?"):
+            print("O acompanhamento continua aberto.")
+            return
+        motivo = ler_texto(
+            "Por que o acompanhamento está sendo encerrado?",
+            "A resposta foi registrada e não há outra ação no momento.",
+        )
+        if motivo is None:
+            return
+        if salvar_andamento(base, pedido, "Encerrada", pedido["protocolo"], motivo):
+            print("Acompanhamento encerrado. Isso não significa que o problema foi resolvido.")
+        return
+
+    print("\nEste acompanhamento já foi encerrado.")
+    print("Histórico:")
+    for numero, evento in enumerate(pedido["historico"], start=1):
+        print(f"{numero}. {evento['situacao']} | Protocolo: {evento['protocolo'] or 'Não informado'} | {evento['observacao']}")
 
 
 def classificar_pendencia(base, local):
@@ -716,24 +779,24 @@ def classificar_pendencia(base, local):
         return "Sem relatos atuais", "Cadastre uma dificuldade na opção 1, se necessário."
     encerradas = [p for p in base["solicitacoes"] if p["local_id"] == local["id"] and p["situacao"] == "Encerrada"]
     if encerradas and conteudo_atualizado(base, encerradas[-1]):
-        return "Acompanhamento encerrado", "Consulte o histórico na opção 6; nova solicitação pode ser preparada se necessário."
+        return "Pedido encerrado", "Consulte o histórico na opção 6 ou crie outro pedido na opção 5."
     if analise["pendencias"]:
         return "Informações a completar", " ".join(analise["pendencias"])
-    return "Pedido a preparar", "Analise o local e prepare a solicitação na opção 5."
+    return "Pedido a criar", "Gere o texto do pedido na opção 5."
 
 
 def classificar_solicitacao_ativa(base, pedido, analise):
     match pedido["situacao"]:
         case "Preparada" if analise["pendencias"] or not conteudo_atualizado(base, pedido):
-            return "Revisar rascunho", "Atualize informações e prepare novamente na opção 5."
+            return "Atualizar pedido", "Corrija as informações e gere novamente o texto na opção 5."
         case "Preparada" if any(r["origem"] == "Exemplo fictício" for r in analise["relatos"]):
-            return "Demonstração", "Pedido fictício preparado; teste o acompanhamento na opção 6, sem envio real."
+            return "Demonstração", "O pedido fictício está pronto; registre um envio de teste na opção 6."
         case "Preparada":
-            return "Aguardando encaminhamento", "Copie o pedido e, após o envio, registre o andamento na opção 6."
+            return "Pronto para enviar", "Copie o pedido e depois registre o envio na opção 6."
         case "Encaminhada":
-            return "Aguardando resposta", "Consulte o atendimento com o protocolo e registre o retorno na opção 6."
+            return "Aguardando resposta", "Quando receber um retorno, registre-o na opção 6."
         case "Resposta recebida":
-            return "Resposta a avaliar", "Leia o retorno e registre o próximo passo ou encerramento na opção 6."
+            return "Resposta recebida", "Leia o retorno e encerre o pedido pela opção 6 quando terminar."
 
 
 def exibir_pendencias(base):
@@ -807,6 +870,30 @@ def exibir_painel_geral(base):
     exibir_pendencias(base)
 
 
+def reiniciar_sistema(base):
+    """Apaga os registros confirmados e mantém um JSON vazio e válido."""
+    exibir_titulo("REINICIAR O PASSAÍ", "-")
+    if base == nova_base():
+        print("O sistema já está sem dados cadastrados.")
+        return
+
+    print("Esta opção excluirá permanentemente:")
+    print(f"- {len(base['locais'])} local(is)")
+    print(f"- {len(base['relatos'])} dificuldade(s)")
+    print(f"- {len(base['solicitacoes'])} pedido(s), incluindo seus históricos")
+    print("Depois disso, o sistema começará novamente do zero.")
+
+    if not confirmar("Tem certeza de que deseja excluir todos os dados?"):
+        print("Reinicialização cancelada. Nenhum dado foi excluído.")
+        return
+
+    base_vazia = nova_base()
+    if salvar_dados(ARQUIVO_DADOS, base_vazia):
+        base.clear()
+        base.update(base_vazia)
+        print("Todos os dados foram excluídos. O Passaí está pronto para começar do zero.")
+
+
 def main():
     exibir_titulo("PASSAÍ — APOIO À ACESSIBILIDADE NAS TRAVESSIAS")
     print("Relate dificuldades, prepare pedidos e acompanhe o retorno.".center(LARGURA_TELA))
@@ -820,14 +907,15 @@ def main():
         return
     try:
         while True:
-            opcao = ler_opcao(f"MENU PRINCIPAL — {nome}", (
+            opcao = ler_opcao(f"MENU PRINCIPAL PASSAÍ — {nome}", (
                 "Registrar uma dificuldade",
                 "Ver dificuldades cadastradas",
                 "Alterar uma dificuldade",
                 "Excluir uma dificuldade",
-                "Analisar um local e preparar solicitação",
-                "Atualizar acompanhamento de solicitação",
+                "Criar um pedido de melhoria",
+                "Registrar envio ou resposta",
                 "Ver painel geral e pendências",
+                "Excluir todos os dados e reiniciar",
             ), voltar="Sair")
             match opcao:
                 case 1:
@@ -841,9 +929,11 @@ def main():
                 case 5:
                     preparar_solicitacao(base)
                 case 6:
-                    atualizar_andamento(base)
+                    registrar_envio_ou_resposta(base)
                 case 7:
                     exibir_painel_geral(base)
+                case 8:
+                    reiniciar_sistema(base)
                 case 0:
                     exibir_titulo("ATÉ LOGO", "-")
                     print("Alterações confirmadas foram salvas.")

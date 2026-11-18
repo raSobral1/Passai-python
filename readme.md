@@ -97,9 +97,10 @@ PASSAÍ — APOIO À ACESSIBILIDADE NAS TRAVESSIAS
 2. Ver dificuldades cadastradas
 3. Alterar uma dificuldade
 4. Excluir uma dificuldade
-5. Analisar um local e preparar solicitação
-6. Atualizar acompanhamento de solicitação
+5. Criar um pedido de melhoria
+6. Registrar envio ou resposta
 7. Ver painel geral e pendências
+8. Excluir todos os dados e reiniciar
 0. Sair
 ```
 
@@ -141,28 +142,28 @@ Locais com diferenças apenas de maiúsculas/minúsculas e espaços são reaprov
 
 Mostra diretamente a lista de dificuldades e pede confirmação antes da exclusão. Solicitações já preparadas conservam a cópia histórica do relato utilizado; somente a lista atual é alterada.
 
-### 5. Analisar um local e preparar solicitação
+### 5. Criar um pedido de melhoria
 
 Quando existe apenas um local, ele é selecionado automaticamente. Com vários locais, o programa apresenta uma lista simples para escolha.
 
-O programa reúne os relatos atuais do local, conta os tipos de dificuldade e aplica as regras de análise. Se faltar confirmação da referência ou identificação da origem de um registro migrado, ele mostra o que deve ser completado. A confirmação da referência é humana: o programa não verifica endereços em mapas.
+O programa reúne automaticamente as dificuldades do local e transforma essas informações em um texto de solicitação. A pessoa não precisa entrar em uma tela separada de análise. Se faltar confirmação da referência ou identificação da origem de um registro migrado, o programa mostra uma lista curta do que precisa ser corrigido. A confirmação da referência é humana: o programa não verifica endereços em mapas.
 
-Quando as informações estão prontas, apresenta uma prévia da solicitação. Ao confirmar, salva o pedido com situação **Preparada**. O texto pode ser selecionado e copiado do terminal. Não é gerado um arquivo adicional de relatório.
+Quando as informações estão prontas, o texto aparece no terminal. Ao confirmar, ele é salvo como **Preparada** e fica pronto para copiar. Não é gerado um arquivo adicional de relatório e nada é enviado automaticamente.
 
-Se já existir um rascunho para aquele local, a análise atualiza esse rascunho após confirmação. Se nada mudou, apenas informa que o conteúdo já foi preparado. Um pedido encaminhado ou respondido conserva o texto original e deve ser consultado pela opção 6.
+Se já existir um pedido ainda não enviado, a opção mostra o texto salvo ou permite atualizá-lo quando os relatos mudarem. Um pedido já enviado conserva o texto original; nesse caso, a opção orienta a continuar pela opção 6.
 
-### 6. Atualizar acompanhamento de solicitação
+### 6. Registrar envio ou resposta
 
-Apresenta o texto salvo e o histórico da solicitação. As ações disponíveis dependem da situação atual:
+Essa opção funciona como um passo a passo e mostra somente a próxima ação necessária. Quando existe apenas um pedido, ele é selecionado automaticamente:
 
-| Situação atual | Ações disponíveis |
+| Situação atual | O que o programa pergunta |
 |---|---|
-| Preparada | Registrar encaminhamento, encerrar ou adicionar observação. |
-| Encaminhada | Registrar resposta, encerrar ou adicionar observação. |
-| Resposta recebida | Encerrar ou adicionar observação. |
-| Encerrada | Consultar o texto e o histórico. Um novo pedido pode ser preparado na opção 5. |
+| Preparada | Se o pedido já foi enviado. O protocolo é opcional. |
+| Encaminhada | Se uma resposta foi recebida. O resumo da resposta é obrigatório. |
+| Resposta recebida | Se o acompanhamento pode ser encerrado e por quê. |
+| Encerrada | Apenas mostra o histórico, sem oferecer alterações desnecessárias. |
 
-Ao registrar encaminhamento de dados informados/documentais, o programa pergunta se o próprio usuário já fez o envio. O protocolo é opcional, pois pode não ter sido fornecido. Uma observação pode explicar o retorno ou o próximo passo. Para encerrar, a observação é obrigatória.
+Assim, não há um segundo menu com várias ações técnicas. O fluxo segue a ordem natural: **pedido preparado → pedido enviado → resposta recebida → encerrado**. O protocolo continua opcional, pois o canal de atendimento pode não fornecê-lo.
 
 Receber uma resposta não encerra automaticamente o acompanhamento. Encerrar não significa que a travessia foi corrigida.
 
@@ -175,7 +176,7 @@ Reúne em uma única tela o resumo geral e as próximas ações. O painel aprese
 | Categoria | Significado |
 |---|---|
 | Informações a completar | Falta confirmar a referência do local ou identificar a origem de registros antigos. |
-| Pedido a preparar | Há informações disponíveis e ainda não há solicitação ativa. |
+| Pedido a criar | Há informações disponíveis e ainda não há pedido ativo. |
 | Revisar rascunho | Os relatos/local mudaram desde a preparação, ou há informações pendentes. |
 | Aguardando encaminhamento | O pedido está preparado e atualizado. |
 | Aguardando resposta | O usuário registrou o encaminhamento. |
@@ -185,6 +186,12 @@ Reúne em uma única tela o resumo geral e as próximas ações. O painel aprese
 | Sem relatos atuais | O local existe, mas não tem relatos atuais, por exemplo após uma exclusão. |
 
 Os locais aparecem na ordem de cadastro. Essa ordem não indica perigo, gravidade ou prioridade técnica. As contagens servem para organização e demonstração; não representam pessoas distintas, risco técnico ou melhorias realizadas na cidade.
+
+### 8. Excluir todos os dados e reiniciar
+
+Mostra quantos locais, dificuldades e pedidos serão apagados e pede confirmação antes de continuar. Se a pessoa cancelar, nenhum dado é alterado.
+
+Ao confirmar, todos os locais, dificuldades, pedidos e históricos são excluídos permanentemente. O arquivo `dados.json` não é removido: ele volta para uma estrutura vazia e válida, com os contadores reiniciados. Assim, o programa pode continuar aberto e receber novos cadastros desde o início.
 
 ## Regras de análise e decisões do programa
 
@@ -220,11 +227,11 @@ Este roteiro usa um local e informações fictícios. Ele não foi inserido como
 
 1. Na opção 1, registre “O sinal fechou antes de eu terminar”, no local “Rua Exemplo, em frente ao mercado, Santana”. Escolha a frequência, deixe detalhes em branco se quiser e selecione **Exemplo fictício**.
 2. Registre uma segunda dificuldade no mesmo local: “A rampa estava ausente ou bloqueada”. Reutilize o local na lista e marque novamente **Exemplo fictício**.
-3. Na opção 5, analise o local. Complete/confirme a referência quando solicitado.
+3. Na opção 5, crie o pedido. Complete/confirme a referência quando solicitado.
 4. Confira que o pedido reúne avaliação do tempo e das condições de acesso à faixa, com o aviso de demonstração.
 5. Confirme a preparação e consulte o painel na opção 7.
-6. Na opção 6, registre o encaminhamento fictício para demonstrar o acompanhamento. Use um protocolo claramente fictício, como `TESTE-001`.
-7. Registre uma resposta de demonstração e depois encerre com uma justificativa.
+6. Na opção 6, registre o envio fictício. Use um protocolo claramente fictício, como `TESTE-001`.
+7. Abra novamente a opção 6 para registrar uma resposta de demonstração e, depois, use-a mais uma vez para encerrar com uma justificativa.
 8. Feche e abra o programa. O texto e o histórico continuam disponíveis.
 
 O resultado demonstrado é a organização do trabalho: dois relatos passam a compor um pedido com avaliações específicas e histórico consultável.
@@ -282,28 +289,7 @@ Um andamento antigo não é convertido automaticamente em uma solicitação nova
 | Validação | Campos obrigatórios, escolhas válidas, vínculos e consistência dos dados. |
 | Experiência do usuário | Identificação pelo nome, menus com separadores, escolhas numeradas, retorno com `0`, exemplos apenas quando úteis, confirmação e mensagens de próxima ação. |
 
-As funções são organizadas dentro de um único arquivo para atender ao escopo escolhido pela equipe. Validação, entrada, persistência, relatos, análise e acompanhamento possuem funções próprias. Regras repetidas ficam em dicionários como `REGRAS_ANALISE` e `TRANSICOES_SITUACAO`; `match/case` organiza fluxos com várias opções. A lógica de análise e a geração do texto ficam separadas da leitura das entradas, facilitando a explicação e a verificação.
-
-## Relação com as outras partes do Travessia
-
-| Parte | Papel no projeto integrado |
-|---|---|
-| Python / Passaí | Organizar relatos, aplicar regras e acompanhar pedidos. |
-| Front-end e Web Development | Apresentar os locais e informações na aplicação web. |
-| Edge Computing | Demonstrar um semáforo experimental com sensoriamento e decisão local. |
-| Matemática | Estudar modelos de tempo de travessia e suas hipóteses. |
-| Experiência | Definir requisitos e validar a jornada de uso. |
-| Storytelling | Comunicar problema, funcionamento e benefício esperado. |
-
-Esta versão Python é local e independente. Não há API, importação/exportação operacional com o site nem conexão com ESP32 implementadas. Seus IDs e campos podem orientar um contrato comum de dados em uma evolução futura. Dados do protótipo semafórico devem continuar identificados como experimentais e separados dos relatos.
-
-## Como medir o resultado
-
-O painel conta solicitações por **situação atual**: preparada, encaminhada, resposta recebida e encerrada. Assim, um pedido que avançou para “Resposta recebida” deixa de ser contado como atualmente “Encaminhada”. Esses números não são totais acumulados de envios.
-
-Solicitações de demonstração aparecem separadas. Mesmo os registros informados/documentais não são verificados automaticamente. Vários relatos podem vir da mesma pessoa e “Mais de uma vez” não informa uma quantidade exata de ocorrências.
-
-Indicadores a avaliar com usuários incluem facilidade de concluir o cadastro, tempo para preparar uma solicitação e capacidade de encontrar pendências. Eles ainda não foram medidos em uso real. Melhorias efetivas nas travessias só poderiam ser apresentadas após verificação externa.
+As funções são organizadas dentro de um único arquivo para atender ao escopo escolhido pela equipe. Validação, entrada, persistência, relatos, geração do pedido e acompanhamento possuem funções próprias. Regras repetidas ficam em dicionários como `REGRAS_ANALISE`; `match/case` organiza fluxos com várias opções. A lógica de análise e a geração do texto ficam separadas da leitura das entradas, facilitando a explicação e a verificação.
 
 ## Integrantes
 
