@@ -1,98 +1,48 @@
-# Passaí — Apoio à acessibilidade nas travessias
+# Passaí - Apoio à acessibilidade nas travessias
 
-O Passaí é um assistente de terminal que transforma dificuldades relatadas em travessias de pedestres em pedidos de avaliação organizados e acompanháveis. Ele reúne informações por local, identifica quais aspectos devem aparecer na solicitação e ajuda a acompanhar o encaminhamento e o retorno.
+## Introdução
 
-Este programa representa a parte de **Computational Thinking with Python** do projeto **Travessia**, desenvolvido para a Global Solution CitizenTech. O Travessia contempla análise cidadã e um protótipo semafórico experimental; o Passaí concentra o trabalho em Python na organização e interpretação dos relatos.
+O **Passaí** é uma aplicação de terminal desenvolvida em Python para ajudar a organizar dificuldades encontradas por pedestres em travessias urbanas.
 
-## Ficha da CitizenTech
+O sistema permite registrar situações como tempo insuficiente no semáforo, rampas ausentes ou bloqueadas, obstáculos no caminho e dificuldade para perceber a sinalização. A partir dessas informações, o programa cria um texto organizado de solicitação de melhoria e permite registrar o envio e a resposta recebida.
+
+O Passaí representa a parte de **Computational Thinking with Python** do projeto **Travessia**, desenvolvido para a Global Solution CitizenTech. Seu papel é processar dados, aplicar regras simples de decisão e conservar as informações em um arquivo JSON.
+
+## Visão geral
 
 | Item | Descrição |
 |---|---|
 | Projeto integrado | Travessia |
-| Aplicação Python | Passaí — Apoio à acessibilidade nas travessias |
-| Território de referência | São Paulo, com recorte inicial de estudo em Santana, Zona Norte. O programa permite cadastrar outros locais. |
-| Cidadão beneficiado | Pedestres, especialmente idosos e pessoas com mobilidade reduzida, que enfrentam dificuldades nas travessias. |
-| Usuário do terminal | Pessoa de um coletivo, associação, equipe de pesquisa ou comunidade que organiza informações sobre os locais. |
-| Problema em uma frase | Dificuldades de travessia ficam dispersas em relatos, sem uma descrição organizada do que precisa ser avaliado e sem acompanhamento dos encaminhamentos. |
-| Como funciona | Registrar dificuldade → reunir relatos do local → sugerir pontos de avaliação → preparar solicitação → acompanhar retorno. |
-| Papel do Python | Processar relatos, aplicar regras de análise, organizar pendências e conservar os dados. |
-| Indicador inicial | Quantidades de solicitações preparadas, encaminhadas, respondidas e encerradas, separadas dos exemplos fictícios. |
-| ODS relacionados | ODS 11 — Cidades e comunidades sustentáveis; ODS 10 — Redução das desigualdades. |
-| Repositório | Preencher com o endereço do repositório da equipe. |
+| Aplicação em Python | Passaí |
+| Tema | Acessibilidade e segurança nas travessias de pedestres |
+| Problema | Dificuldades ficam dispersas e nem sempre são transformadas em pedidos claros de avaliação. |
+| Solução | Registrar dificuldades, organizá-las por local, gerar um pedido e acompanhar o retorno. |
+| Usuários | Comunidades, coletivos, associações ou equipes que organizam informações sobre travessias. |
+| Público beneficiado | Pedestres, especialmente idosos e pessoas com mobilidade reduzida. |
+| Armazenamento | Arquivo local `dados.json`. |
 
-O vínculo com o ODS 11 está no apoio à identificação de barreiras de mobilidade e acesso aos espaços urbanos. A contribuição pretendida ao ODS 10 está em facilitar a participação e a expressão de necessidades de pessoas que encontram barreiras de acesso à cidade. Essas são contribuições esperadas do projeto, não impactos já comprovados.
+## Problema e objetivo
 
-## Por que o projeto existe
+Uma pessoa pode não conseguir terminar a travessia antes de o sinal fechar, encontrar uma rampa bloqueada ou ter dificuldade para perceber a sinalização. Mesmo quando essas situações são relatadas, as informações podem ficar espalhadas e sem acompanhamento.
 
-Uma pessoa pode ter dificuldade para concluir a travessia antes de o sinal fechar, perceber a sinalização ou chegar até a faixa por uma rampa. Entretanto, transformar essa experiência em uma solicitação compreensível exige organizar o local, explicar a dificuldade e guardar o andamento do atendimento.
+O objetivo do Passaí é facilitar essa organização. Em vez de exigir termos técnicos, o programa apresenta escolhas em linguagem simples, reúne os registros de um mesmo local e gera um pedido solicitando a avaliação dos pontos informados.
 
-O Passaí apoia esse processo. A pessoa não precisa informar largura da rua, velocidade de deslocamento, tempo semafórico ou termos técnicos. Ela escolhe opções em linguagem comum, informa uma referência do local e pode acrescentar detalhes.
+O programa não substitui uma vistoria profissional e não declara que uma travessia está irregular. Ele organiza relatos e produz pedidos de avaliação que podem ser encaminhados pelo próprio usuário.
 
-O benefício imediato é tornar as informações consultáveis e produzir um pedido coerente com as dificuldades relatadas. A melhoria física de uma travessia depende de avaliação e atuação externa. O programa, sozinho, não modifica a rua nem comprova que um problema foi resolvido.
+## Como o sistema funciona
 
-## O que o Passaí faz
+O fluxo principal possui quatro etapas:
 
-- Registra dificuldades com opções numeradas e orientações somente nos campos que podem gerar dúvida.
-- Reutiliza locais cadastrados para reduzir digitação e agrupar relatos.
-- Distingue relatos informados, fontes públicas e exemplos fictícios.
-- Permite consultar, corrigir e excluir relatos, além de completar a referência do local.
-- Reúne os relatos de um local e sugere quais avaliações incluir no pedido.
-- Salva uma solicitação preparada, mantendo o texto que foi produzido.
-- Registra protocolo, situação e histórico do acompanhamento.
-- Mostra pendências e próximos passos por local.
-- Salva os dados em JSON para continuar o trabalho após fechar o programa.
+1. **Registrar:** a pessoa informa o local e a dificuldade encontrada.
+2. **Organizar:** o sistema agrupa as dificuldades cadastradas por local.
+3. **Gerar o pedido:** o programa transforma as informações em um texto organizado.
+4. **Acompanhar:** a pessoa registra o envio, o protocolo, a resposta e o encerramento.
 
-## Como executar
+O envio não é realizado automaticamente. O texto é exibido no terminal para que o usuário possa copiá-lo e encaminhá-lo pelo canal de atendimento escolhido.
 
-**Requisito:** Python 3.10 ou superior, devido ao uso de `match/case`.
-
-O projeto utiliza apenas `json` e `pathlib`, da biblioteca padrão. Não é necessário instalar pacotes com `pip`, configurar banco de dados ou ter internet para usar o programa.
-
-1. Abra um terminal na pasta que contém `passai.py`.
-2. Execute:
-
-```console
-python passai.py
-```
-
-No Windows, se o launcher estiver disponível, também é possível executar:
-
-```console
-py passai.py
-```
-
-Para conferir a versão instalada:
-
-```console
-python --version
-```
-
-O arquivo `dados.json` sempre é procurado na mesma pasta de `passai.py`, independentemente da pasta em que o terminal foi aberto. Se o arquivo não existir, estiver vazio ou contiver apenas espaços, o programa inicia normalmente sem cadastros. Na primeira alteração confirmada, o arquivo é criado ou preenchido automaticamente com a estrutura JSON necessária.
-
-## Arquivos do projeto
+## Funcionalidades
 
 ```text
-Passai-python/
-├── passai.py
-├── dados.json
-├── readme.md
-├── prompt.md
-└── prompts.md
-```
-
-Todo o código está em `passai.py`, organizado em funções. `dados.json` contém os registros. Os Markdown descrevem o projeto e documentam o uso de IA.
-
-Os nomes `prompt.md` e `prompts.md` aparecem em páginas diferentes do enunciado. Foram mantidos os dois, com conteúdo idêntico. Qualquer atualização nesse registro deve ser replicada nos dois arquivos.
-
-## Menu e navegação
-
-Ao iniciar, o Passaí pede o nome da pessoa e mostra uma saudação antes do menu. O nome serve somente para personalizar a execução atual: ele não é gravado no JSON e não é associado aos relatos.
-
-O nome é solicitado diretamente, sem um exemplo desnecessário. Digitar `0` nessa etapa encerra o programa antes de carregar o menu.
-
-```text
-PASSAÍ — APOIO À ACESSIBILIDADE NAS TRAVESSIAS
-
 1. Registrar uma dificuldade
 2. Ver dificuldades cadastradas
 3. Alterar uma dificuldade
@@ -104,199 +54,184 @@ PASSAÍ — APOIO À ACESSIBILIDADE NAS TRAVESSIAS
 0. Sair
 ```
 
-Digite o número da **opção exibida**, que pode ser diferente do identificador interno de um relato ou solicitação. Os menus não repetem exemplos como “digite 1”; basta escolher um dos números apresentados.
+| Opção | O que faz |
+|---|---|
+| 1 | Cadastra uma dificuldade, o local, a frequência, os detalhes e a origem da informação. |
+| 2 | Mostra todas as dificuldades cadastradas. |
+| 3 | Permite corrigir dificuldade, frequência, detalhes, origem ou local. |
+| 4 | Exclui uma dificuldade após confirmação. |
+| 5 | Reúne as dificuldades de um local e cria o texto do pedido de melhoria. |
+| 6 | Conduz o pedido pelas etapas de envio, resposta recebida e encerramento. |
+| 7 | Apresenta as quantidades cadastradas e as próximas ações de cada local. |
+| 8 | Apaga todos os registros após confirmação e reinicia o sistema. |
+| 0 | Encerra o programa. |
 
-Nos submenus, `0` volta; no menu principal, encerra. Em todos os campos de texto, `0` também cancela a operação atual e retorna. Campos opcionais aceitam Enter. Quando um valor atual é apresentado, Enter o mantém; `-` apaga um campo opcional. Confirmações usam `s` ou `n`. Exemplos aparecem somente em entradas como endereço, fonte e protocolo, nas quais ajudam a esclarecer o formato esperado. Ctrl+C encerra o programa e preserva o que já foi salvo.
+Nos submenus e campos de texto, o número `0` cancela a operação atual. Confirmações utilizam `s` ou `n`. Campos opcionais podem ser ignorados pressionando Enter.
 
-Linhas horizontais separam os títulos, opções e mensagens para facilitar a leitura no terminal. A apresentação utiliza apenas `print`, sem bibliotecas visuais externas.
+## Dificuldades registradas
 
-### 1. Registrar uma dificuldade
+O usuário pode selecionar uma das seguintes situações:
 
-O usuário escolhe o que aconteceu:
-
-- O sinal fechou antes de terminar a travessia.
+- O sinal fechou antes de a travessia terminar.
 - A rampa estava ausente ou bloqueada.
 - A calçada ou a faixa tinha obstáculos.
 - Houve dificuldade para perceber a sinalização.
-- Outra dificuldade.
+- Outra dificuldade, descrita pelo usuário.
 
-Depois, seleciona um local já cadastrado ou informa outro. Um exemplo apresentado pelo programa é: “Rua Exemplo, em frente ao mercado, perto do número 100, Santana”.
+Também são registradas a frequência, informações adicionais e a origem do dado. A origem pode ser um relato informado, uma fonte pública ou um exemplo fictício utilizado na demonstração acadêmica.
 
-A frequência é selecionada entre “Uma vez”, “Mais de uma vez” e “Não sei informar”. Os detalhes são opcionais, exceto para “Outra dificuldade”, que precisa de descrição.
+## Como o pedido é criado
 
-Por último, o usuário indica a origem do registro. Uma fonte pública exige referência. O programa mostra as informações antes da confirmação. Cancelar não deixa um local ou relato salvo pela metade.
+Cada dificuldade está relacionada a um ponto de avaliação:
 
-### 2. Ver dificuldades cadastradas
-
-Mostra todas as dificuldades atuais em uma única lista, sem exigir que a pessoa entre primeiro em um local. Cada item apresenta número do relato, local, dificuldade, frequência, origem e detalhes.
-
-Essa opção é somente para consulta. Alteração e exclusão possuem opções próprias no menu principal.
-
-### 3. Alterar uma dificuldade
-
-Mostra diretamente a lista de dificuldades cadastradas. Depois de selecionar uma, a pessoa escolhe qual informação deseja alterar: dificuldade, frequência, detalhes, origem dos dados ou local.
-
-Locais com diferenças apenas de maiúsculas/minúsculas e espaços são reaproveitados. Descrições diferentes do mesmo endereço não são unificadas automaticamente. Para corrigir esse caso, mova o relato para o local correto.
-
-### 4. Excluir uma dificuldade
-
-Mostra diretamente a lista de dificuldades e pede confirmação antes da exclusão. Solicitações já preparadas conservam a cópia histórica do relato utilizado; somente a lista atual é alterada.
-
-### 5. Criar um pedido de melhoria
-
-Quando existe apenas um local, ele é selecionado automaticamente. Com vários locais, o programa apresenta uma lista simples para escolha.
-
-O programa reúne automaticamente as dificuldades do local e transforma essas informações em um texto de solicitação. A pessoa não precisa entrar em uma tela separada de análise. Se faltar confirmação da referência ou identificação da origem de um registro migrado, o programa mostra uma lista curta do que precisa ser corrigido. A confirmação da referência é humana: o programa não verifica endereços em mapas.
-
-Quando as informações estão prontas, o texto aparece no terminal. Ao confirmar, ele é salvo como **Preparada** e fica pronto para copiar. Não é gerado um arquivo adicional de relatório e nada é enviado automaticamente.
-
-Se já existir um pedido ainda não enviado, a opção mostra o texto salvo ou permite atualizá-lo quando os relatos mudarem. Um pedido já enviado conserva o texto original; nesse caso, a opção orienta a continuar pela opção 6.
-
-### 6. Registrar envio ou resposta
-
-Essa opção funciona como um passo a passo e mostra somente a próxima ação necessária. Quando existe apenas um pedido, ele é selecionado automaticamente:
-
-| Situação atual | O que o programa pergunta |
+| Dificuldade informada | Avaliação incluída no pedido |
 |---|---|
-| Preparada | Se o pedido já foi enviado. O protocolo é opcional. |
-| Encaminhada | Se uma resposta foi recebida. O resumo da resposta é obrigatório. |
-| Resposta recebida | Se o acompanhamento pode ser encerrado e por quê. |
-| Encerrada | Apenas mostra o histórico, sem oferecer alterações desnecessárias. |
+| Sinal fechou antes da conclusão | Avaliação do tempo destinado à travessia. |
+| Rampa ausente ou bloqueada | Avaliação das condições de acesso à faixa. |
+| Obstáculos na calçada ou faixa | Avaliação das condições de acesso e dos obstáculos. |
+| Dificuldade com a sinalização | Avaliação da sinalização e de sua acessibilidade. |
+| Outra dificuldade | Avaliação da situação descrita pelo usuário. |
 
-Assim, não há um segundo menu com várias ações técnicas. O fluxo segue a ordem natural: **pedido preparado → pedido enviado → resposta recebida → encerrado**. O protocolo continua opcional, pois o canal de atendimento pode não fornecê-lo.
+Essas regras apenas organizam o pedido. Elas não calculam risco, não verificam o local e não produzem um laudo técnico.
 
-Receber uma resposta não encerra automaticamente o acompanhamento. Encerrar não significa que a travessia foi corrigida.
+O pedido segue este fluxo:
 
-Há, no máximo, uma solicitação ativa por local. Esse limite ajuda a manter um acompanhamento claro. Novos relatos podem ser registrados enquanto o pedido está em andamento; o programa avisa quando o conteúdo atual difere do pedido anterior. Para um novo pedido, encerre o acompanhamento anterior com justificativa e prepare outro.
+```text
+Preparada -> Encaminhada -> Resposta recebida -> Encerrada
+```
 
-### 7. Ver painel geral e pendências
+- **Preparada:** o texto foi criado e está pronto para copiar.
+- **Encaminhada:** o usuário informou que realizou o envio.
+- **Resposta recebida:** o retorno foi registrado no sistema.
+- **Encerrada:** não existem outras ações de acompanhamento naquele pedido.
 
-Reúne em uma única tela o resumo geral e as próximas ações. O painel apresenta quantidades de locais, relatos e solicitações; agrupamentos por dificuldade, origem e situação; e a pendência de cada local.
+## Como executar
 
-| Categoria | Significado |
+### Requisito
+
+Python 3.10 ou superior, devido ao uso de `match/case`.
+
+O projeto utiliza apenas `json` e `pathlib`, que fazem parte da biblioteca padrão do Python. Não é necessário instalar pacotes externos, utilizar banco de dados ou ter conexão com a internet.
+
+### Execução
+
+1. Abra o terminal na pasta do projeto.
+2. Execute:
+
+```console
+python passai.py
+```
+
+No Windows, também pode ser utilizado:
+
+```console
+py passai.py
+```
+
+## Arquivos do projeto
+
+```text
+Passai-python/
+├── passai.py
+├── dados.json
+└── readme.md
+```
+
+- `passai.py`: contém todo o código da aplicação.
+- `dados.json`: guarda os locais, dificuldades, pedidos e históricos.
+- `readme.md`: apresenta e explica o projeto.
+
+O arquivo de documentação do uso de Inteligência Artificial será adicionado posteriormente, de acordo com as instruções da disciplina.
+
+## Salvamento dos dados
+
+O arquivo `dados.json` permite continuar o trabalho depois que o programa é fechado. São armazenados:
+
+- Locais cadastrados.
+- Dificuldades e suas informações.
+- Pedidos gerados.
+- Protocolos e situações atuais.
+- Histórico de cada pedido.
+- Contadores utilizados para criar identificadores únicos.
+
+Se `dados.json` não existir ou estiver vazio, o Passaí começa normalmente sem nenhum cadastro. O arquivo recebe a estrutura necessária quando a primeira alteração é confirmada.
+
+Antes de salvar, o programa verifica se os campos, identificadores e relações entre os registros são válidos. A gravação utiliza primeiro um arquivo temporário e somente depois substitui o JSON principal. Isso reduz o risco de perder os dados caso ocorra uma falha durante a escrita.
+
+## Perguntas que o grupo deve saber responder
+
+### Como os dados são carregados e salvos?
+
+Ao iniciar, o programa lê `dados.json` e transforma seu conteúdo em listas e dicionários do Python. Sempre que uma alteração é confirmada, os dados atualizados são gravados novamente no arquivo.
+
+### Por que existe um arquivo temporário na gravação?
+
+O programa primeiro grava tudo em `dados.json.tmp`. Somente quando essa gravação termina corretamente, o temporário substitui o arquivo principal. Assim, uma falha no meio do processo não destrói os dados que já estavam salvos.
+
+### Como os identificadores são criados?
+
+Locais, dificuldades e pedidos recebem números únicos. O JSON guarda qual será o próximo número de cada tipo. Depois de um cadastro, esse contador aumenta para evitar identificadores repetidos.
+
+### Como funciona o histórico dos pedidos?
+
+Cada mudança acrescenta um novo registro ao histórico. Dessa forma, o sistema conserva a sequência: pedido preparado, enviado, respondido e encerrado.
+
+### Por que o pedido guarda uma cópia das dificuldades?
+
+A cópia registra exatamente quais informações foram utilizadas na criação do pedido. Se uma dificuldade for alterada ou excluída depois, o texto que já foi encaminhado continua preservado.
+
+### Como a opção 8 reinicia o sistema?
+
+Ela mostra quantos dados serão apagados e pede confirmação. Depois, grava uma estrutura JSON nova e vazia. A memória do programa só é limpa se essa gravação funcionar corretamente.
+
+### Como as regras transformam dificuldades em pedidos?
+
+Cada tipo de dificuldade possui uma sugestão de avaliação. Por exemplo, um relato sobre o sinal fechar cedo gera um pedido para avaliar o tempo da travessia. O sistema organiza a solicitação, mas não afirma que existe uma irregularidade.
+
+### O que acontece se o JSON estiver incorreto?
+
+O programa informa que não conseguiu abrir os dados e preserva o arquivo. Ele não substitui automaticamente um conteúdo inválido, evitando apagar informações que possam ser recuperadas.
+
+### Por que o projeto usa JSON em vez de banco de dados?
+
+O JSON atende ao requisito da disciplina e é suficiente para uma aplicação local de terminal. Ele permite demonstrar leitura, gravação e manipulação de dados sem depender de serviços externos.
+
+## Conceitos de Python utilizados
+
+| Requisito da disciplina | Aplicação no Passaí |
 |---|---|
-| Informações a completar | Falta confirmar a referência do local ou identificar a origem de registros antigos. |
-| Pedido a criar | Há informações disponíveis e ainda não há pedido ativo. |
-| Revisar rascunho | Os relatos/local mudaram desde a preparação, ou há informações pendentes. |
-| Aguardando encaminhamento | O pedido está preparado e atualizado. |
-| Aguardando resposta | O usuário registrou o encaminhamento. |
-| Resposta a avaliar | Foi registrado retorno e o acompanhamento continua aberto. |
-| Demonstração | O rascunho contém exemplo fictício e pode ser usado para testar o fluxo. |
-| Acompanhamento encerrado | A última solicitação foi encerrada e os dados atuais não mudaram. |
-| Sem relatos atuais | O local existe, mas não tem relatos atuais, por exemplo após uma exclusão. |
+| Menu de opções | Menu principal e submenus numerados. |
+| Validação de entradas | Verificação de números, textos obrigatórios e confirmações. |
+| `try/except` | Tratamento de opções inválidas e problemas na leitura ou gravação. |
+| `if/elif/else` | Decisões sobre cadastros, pendências e situações dos pedidos. |
+| `match/case` | Encaminhamento das opções do menu e outros fluxos com várias escolhas. |
+| `while` | Repetição do menu e de perguntas até receber uma entrada válida. |
+| `for` | Percurso de locais, dificuldades, pedidos e históricos. |
+| Funções | Separação das responsabilidades e reaproveitamento da lógica. |
+| Listas | Coleções de locais, dificuldades, pedidos e eventos históricos. |
+| Tuplas | Opções fixas apresentadas ao usuário. |
+| Dicionários | Representação dos registros e das regras de análise. |
+| JSON | Persistência dos dados entre as execuções. |
 
-Os locais aparecem na ordem de cadastro. Essa ordem não indica perigo, gravidade ou prioridade técnica. As contagens servem para organização e demonstração; não representam pessoas distintas, risco técnico ou melhorias realizadas na cidade.
+## Cuidados com as informações
 
-### 8. Excluir todos os dados e reiniciar
+O Passaí não acessa mapas, não verifica fontes públicas automaticamente e não envia pedidos para órgãos externos. As informações são registradas conforme foram fornecidas pelo usuário.
 
-Mostra quantos locais, dificuldades e pedidos serão apagados e pede confirmação antes de continuar. Se a pessoa cancelar, nenhum dado é alterado.
+Para demonstrações acadêmicas, recomenda-se utilizar dados fictícios ou públicos e evitar dados pessoais. Exemplos fictícios são identificados no texto para que não sejam confundidos com relatos reais.
 
-Ao confirmar, todos os locais, dificuldades, pedidos e históricos são excluídos permanentemente. O arquivo `dados.json` não é removido: ele volta para uma estrutura vazia e válida, com os contadores reiniciados. Assim, o programa pode continuar aberto e receber novos cadastros desde o início.
+## Roteiro curto de demonstração
 
-## Regras de análise e decisões do programa
-
-As regras abaixo são escolhas do projeto, destinadas a organizar pedidos de avaliação. Não são critérios oficiais de engenharia de tráfego.
-
-| Entrada | Resultado sugerido |
-|---|---|
-| Sinal fechou antes da conclusão | Avaliação do tempo destinado à travessia de pedestres. |
-| Dificuldade para perceber sinalização | Avaliação da sinalização para pedestres e de sua acessibilidade. |
-| Rampa ausente/bloqueada ou obstáculos | Avaliação das condições de acesso à faixa, incluindo rampas e obstáculos. |
-| Outra dificuldade | Avaliação da dificuldade adicional descrita no relato. |
-
-Uma mesma solicitação pode reunir vários pontos. Pedidos de avaliação iguais não são repetidos; os relatos individuais permanecem no texto, com suas origens, detalhes e frequências.
-
-O programa não deduz um defeito técnico a partir de uma experiência. Por exemplo, “o sinal fechou antes de eu terminar” gera um pedido de avaliação do tempo, sem declarar que a duração é ilegal ou que o equipamento está com defeito.
-
-## Origem e uso dos dados
-
-| Origem | Como o programa trata |
-|---|---|
-| Relato informado | Informação fornecida pelo usuário, sem verificação técnica pelo programa. |
-| Fonte pública | Registro acompanhado de uma referência escrita pelo usuário. A fonte não é acessada nem verificada automaticamente. |
-| Exemplo fictício | Dados para demonstração e testes. A solicitação inteira recebe um aviso explícito de demonstração. |
-| Não identificada | Usada somente ao importar relatos de versões antigas. Precisa ser corrigida antes de preparar um novo pedido. |
-
-Se um pedido mistura registros fictícios com outros registros, todo o pedido é tratado como demonstração. É possível percorrer os estados de acompanhamento para apresentar o programa; a confirmação de envio explica que o encaminhamento é fictício. Isso não representa submissão a um órgão público.
-
-Para a entrega acadêmica, utilize dados públicos ou fictícios e identifique suas origens, conforme o briefing. Não inclua dados pessoais reais. Os campos livres não possuem um filtro automático de dados pessoais: revise o conteúdo antes de compartilhar a base.
-
-## Exemplo de demonstração completa
-
-Este roteiro usa um local e informações fictícios. Ele não foi inserido como relato real no arquivo entregue.
-
-1. Na opção 1, registre “O sinal fechou antes de eu terminar”, no local “Rua Exemplo, em frente ao mercado, Santana”. Escolha a frequência, deixe detalhes em branco se quiser e selecione **Exemplo fictício**.
-2. Registre uma segunda dificuldade no mesmo local: “A rampa estava ausente ou bloqueada”. Reutilize o local na lista e marque novamente **Exemplo fictício**.
-3. Na opção 5, crie o pedido. Complete/confirme a referência quando solicitado.
-4. Confira que o pedido reúne avaliação do tempo e das condições de acesso à faixa, com o aviso de demonstração.
-5. Confirme a preparação e consulte o painel na opção 7.
-6. Na opção 6, registre o envio fictício. Use um protocolo claramente fictício, como `TESTE-001`.
-7. Abra novamente a opção 6 para registrar uma resposta de demonstração e, depois, use-a mais uma vez para encerrar com uma justificativa.
-8. Feche e abra o programa. O texto e o histórico continuam disponíveis.
-
-O resultado demonstrado é a organização do trabalho: dois relatos passam a compor um pedido com avaliações específicas e histórico consultável.
-
-## Relatos, solicitações e histórico
-
-Um **relato** é uma informação que pode ser corrigida. Uma **solicitação** é um pedido preparado a partir dos relatos de um local. Cada solicitação guarda uma cópia dos relatos e da descrição do local utilizados no momento da preparação.
-
-Se um relato for editado, movido ou excluído, o texto de uma solicitação já encaminhada permanece preservado. Um rascunho preparado é sinalizado como desatualizado e precisa ser revisto antes de registrar seu envio. Isso evita apresentar silenciosamente um texto novo como se fosse o que já havia sido encaminhado.
-
-Atualizar o rascunho substitui sua prévia e acrescenta um evento ao histórico. As versões anteriores do texto do rascunho não são armazenadas. Depois do encaminhamento, o texto não é regenerado pela aplicação.
-
-O histórico guarda situação, protocolo e observação em ordem de registro. Não há datas automáticas ou controle de prazos nesta versão. Ao excluir um relato atual, sua cópia pode continuar existindo nas solicitações históricas e nos dados preservados de versões antigas.
-
-## Persistência e estrutura do JSON
-
-| Campo principal | Finalidade |
-|---|---|
-| `versao` | Identifica o formato da base, atualmente 3. |
-| `locais` | ID, descrição e confirmação da referência de cada local. |
-| `relatos` | ID, vínculo com o local, dificuldade, frequência, detalhes, origem e fonte. |
-| `solicitacoes` | ID, local, texto, cópia dos relatos utilizados, situação, protocolo e histórico. |
-| `proximo_local_id` | Próximo identificador de local. |
-| `proximo_relato_id` | Próximo identificador de relato. |
-| `proxima_solicitacao_id` | Próximo identificador de solicitação. |
-| `dados_versao_anterior` | Conteúdo preservado de uma versão anterior, quando houver. |
-
-Os identificadores não são reutilizados após exclusões. Antes de ler ou gravar, o programa verifica estrutura, campos obrigatórios, IDs, referências e consistência do histórico.
-
-A gravação primeiro escreve `dados.json.tmp` e depois substitui `dados.json`. Se a gravação falhar, a alteração não é aplicada à base em memória. O temporário pode permanecer após uma falha; o arquivo principal continua sendo a base utilizada pelo programa.
-
-Um arquivo vazio é considerado uma base nova. Um arquivo com conteúdo que não seja um JSON válido continua protegido: o programa informa o problema e encerra sem substituí-lo. O programa foi projetado para uma pessoa usando uma instância por vez; não possui sincronização entre processos ou computadores. Uma cópia manual de `dados.json`, feita com o programa fechado, permite guardar um backup.
-
-### Compatibilidade com versões anteriores
-
-Cadastros técnicos antigos são preservados como dados anteriores, sem virarem relatos automaticamente. Relatos da versão 2 são importados com seus IDs, locais e informações, e seu acompanhamento antigo permanece consultável. Como a versão 2 não distinguia a origem dos relatos, eles entram como **Não identificada**, exigindo revisão.
-
-Um andamento antigo não é convertido automaticamente em uma solicitação nova: o programa anterior não armazenava o texto consolidado por local. Protocolos e históricos anteriores são preservados, sem inventar esse conteúdo. Antes de preparar um pedido novo para um relato importado, consulte seu acompanhamento anterior para evitar encaminhamento duplicado.
-
-## Organização do código e conteúdos da disciplina
-
-| Requisito | Aplicação no projeto |
-|---|---|
-| Menu de opções | `main` e `ler_opcao`. |
-| `match/case` | Encaminhamento do menu principal, correção de relatos, migração e classificação do acompanhamento. |
-| `if/elif/else` | Validações e condições pontuais em que há uma decisão binária simples. |
-| `while` | Navegação e repetição de perguntas inválidas. |
-| `for` | Leitura das coleções, análise por local e composição de solicitações. |
-| Funções com parâmetros e retorno | Busca, análise, classificação de pendências, geração de texto e persistência. |
-| Listas | Locais, relatos, solicitações, pontos de avaliação e históricos. |
-| Tuplas | Opções fixas de dificuldades, frequências, origens e situações. |
-| Dicionários | Registros e contagens por tipo de dificuldade. |
-| `try/except` | Conversão de opções e tratamento de falhas de arquivos/JSON. |
-| JSON | Leitura e gravação de toda a base. |
-| Validação | Campos obrigatórios, escolhas válidas, vínculos e consistência dos dados. |
-| Experiência do usuário | Identificação pelo nome, menus com separadores, escolhas numeradas, retorno com `0`, exemplos apenas quando úteis, confirmação e mensagens de próxima ação. |
-
-As funções são organizadas dentro de um único arquivo para atender ao escopo escolhido pela equipe. Validação, entrada, persistência, relatos, geração do pedido e acompanhamento possuem funções próprias. Regras repetidas ficam em dicionários como `REGRAS_ANALISE`; `match/case` organiza fluxos com várias opções. A lógica de análise e a geração do texto ficam separadas da leitura das entradas, facilitando a explicação e a verificação.
+1. Inicie o programa e informe um nome.
+2. Cadastre uma dificuldade fictícia na opção 1.
+3. Consulte o cadastro na opção 2.
+4. Crie o pedido de melhoria na opção 5.
+5. Consulte o painel na opção 7.
+6. Feche e abra o programa para mostrar que os dados continuam salvos.
 
 ## Integrantes
-
-Preencher antes da entrega:
 
 | Nome completo | RM |
 |---|---|
 | Rafael Taboada Sobral | 569527 |
 | Fabricio Denig De Avila | 570980 |
-| Beatriz Perigo| 569654 |
+| Beatriz Perigo | 569654 |
