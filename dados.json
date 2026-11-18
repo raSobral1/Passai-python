@@ -1,0 +1,93 @@
+{
+  "versao": 3,
+  "proximo_local_id": 4,
+  "proximo_relato_id": 4,
+  "proxima_solicitacao_id": 3,
+  "locais": [
+    {
+      "id": 1,
+      "descricao": "Avenida Cruzeiro do Sul, perto do metro santana",
+      "referencia_confirmada": true
+    },
+    {
+      "id": 2,
+      "descricao": "Rua A",
+      "referencia_confirmada": false
+    },
+    {
+      "id": 3,
+      "descricao": "Rua B",
+      "referencia_confirmada": true
+    }
+  ],
+  "relatos": [
+    {
+      "id": 3,
+      "local_id": 3,
+      "dificuldade": "O sinal fechou antes de eu terminar",
+      "frequencia": "Mais de uma vez",
+      "detalhes": "",
+      "origem": "Relato informado",
+      "fonte": ""
+    }
+  ],
+  "solicitacoes": [
+    {
+      "id": 1,
+      "local_id": 1,
+      "situacao": "Encaminhada",
+      "protocolo": "",
+      "historico": [
+        {
+          "situacao": "Preparada",
+          "protocolo": "",
+          "observacao": "Solicitação preparada, ainda não encaminhada."
+        },
+        {
+          "situacao": "Encaminhada",
+          "protocolo": "",
+          "observacao": ""
+        }
+      ],
+      "local_descricao": "Avenida Cruzeiro do Sul, perto do metro santana",
+      "relatos_snapshot": [
+        {
+          "id": 1,
+          "local_id": 1,
+          "dificuldade": "A calçada ou a faixa tinha obstáculos",
+          "frequencia": "Mais de uma vez",
+          "detalhes": "Aconteceu num horario de pico",
+          "origem": "Relato informado",
+          "fonte": ""
+        }
+      ],
+      "texto": "SOLICITAÇÃO DE AVALIAÇÃO DE ACESSIBILIDADE\nLocal informado: Avenida Cruzeiro do Sul, perto do metro santana\nRegistros relacionados: 1 (não equivalem a pessoas distintas).\n\nDificuldades informadas:\n- Relato 001: A calçada ou a faixa tinha obstáculos. Frequência informada: Mais de uma vez.\n  Origem: Relato informado.\n  Detalhes: Aconteceu num horario de pico\n\nSolicita-se:\n- Avaliação das condições de acesso à faixa, incluindo rampas e obstáculos.\n\nAs informações são relatos sem verificação ou medição técnica pelo Passaí. Não constituem laudo nem avaliação de legalidade."
+    },
+    {
+      "id": 2,
+      "local_id": 3,
+      "situacao": "Preparada",
+      "protocolo": "",
+      "historico": [
+        {
+          "situacao": "Preparada",
+          "protocolo": "",
+          "observacao": "Solicitação preparada, ainda não encaminhada."
+        }
+      ],
+      "local_descricao": "Rua B",
+      "relatos_snapshot": [
+        {
+          "id": 3,
+          "local_id": 3,
+          "dificuldade": "O sinal fechou antes de eu terminar",
+          "frequencia": "Mais de uma vez",
+          "detalhes": "",
+          "origem": "Relato informado",
+          "fonte": ""
+        }
+      ],
+      "texto": "SOLICITAÇÃO DE AVALIAÇÃO DE ACESSIBILIDADE\nLocal informado: Rua B\nRegistros relacionados: 1 (não equivalem a pessoas distintas).\n\nDificuldades informadas:\n- Relato 003: O sinal fechou antes de eu terminar. Frequência informada: Mais de uma vez.\n  Origem: Relato informado.\n\nSolicita-se:\n- Avaliação do tempo destinado à travessia de pedestres.\n\nAs informações são relatos sem verificação ou medição técnica pelo Passaí. Não constituem laudo nem avaliação de legalidade."
+    }
+  ]
+}

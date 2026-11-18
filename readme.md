@@ -67,7 +67,7 @@ Para conferir a versão instalada:
 python --version
 ```
 
-O arquivo `dados.json` sempre é procurado na mesma pasta de `passai.py`, independentemente da pasta em que o terminal foi aberto. Se o arquivo não existir, o programa inicia vazio e o cria na primeira gravação confirmada.
+O arquivo `dados.json` sempre é procurado na mesma pasta de `passai.py`, independentemente da pasta em que o terminal foi aberto. Se o arquivo não existir, estiver vazio ou contiver apenas espaços, o programa inicia normalmente sem cadastros. Na primeira alteração confirmada, o arquivo é criado ou preenchido automaticamente com a estrutura JSON necessária.
 
 ## Arquivos do projeto
 
@@ -94,11 +94,12 @@ O nome é solicitado diretamente, sem um exemplo desnecessário. Digitar `0` nes
 PASSAÍ — APOIO À ACESSIBILIDADE NAS TRAVESSIAS
 
 1. Registrar uma dificuldade
-2. Consultar relatos de um local
-3. Analisar relatos e preparar solicitação
-4. Atualizar acompanhamento
-5. Ver solicitações pendentes
-6. Ver resumo geral do sistema
+2. Ver dificuldades cadastradas
+3. Alterar uma dificuldade
+4. Excluir uma dificuldade
+5. Analisar um local e preparar solicitação
+6. Atualizar acompanhamento de solicitação
+7. Ver painel geral e pendências
 0. Sair
 ```
 
@@ -124,25 +125,33 @@ A frequência é selecionada entre “Uma vez”, “Mais de uma vez” e “Nã
 
 Por último, o usuário indica a origem do registro. Uma fonte pública exige referência. O programa mostra as informações antes da confirmação. Cancelar não deixa um local ou relato salvo pela metade.
 
-### 2. Consultar relatos de um local
+### 2. Ver dificuldades cadastradas
 
-Ao selecionar um local, o programa apresenta seus relatos. É possível abrir cada um, corrigir dificuldade, frequência, detalhes e origem, ou movê-lo para outro local. A exclusão exige confirmação.
+Mostra todas as dificuldades atuais em uma única lista, sem exigir que a pessoa entre primeiro em um local. Cada item apresenta número do relato, local, dificuldade, frequência, origem e detalhes.
 
-Também é possível completar ou corrigir a referência do local. Antes de preparar uma solicitação, o usuário precisa confirmar que a descrição permite a outra pessoa identificar a travessia. Essa confirmação é humana: o programa não verifica endereços em mapas nem decide, por quantidade de caracteres, se uma referência é suficiente.
+Essa opção é somente para consulta. Alteração e exclusão possuem opções próprias no menu principal.
 
-Locais com diferenças apenas de maiúsculas/minúsculas e espaços são reaproveitados. Descrições diferentes do mesmo endereço não são unificadas automaticamente. Para corrigir esse caso, mova os relatos para o local correto. Não é permitido renomear um local para a descrição exata de outro já existente.
+### 3. Alterar uma dificuldade
 
-### 3. Analisar relatos e preparar solicitação
+Mostra diretamente a lista de dificuldades cadastradas. Depois de selecionar uma, a pessoa escolhe qual informação deseja alterar: dificuldade, frequência, detalhes, origem dos dados ou local.
 
-O programa reúne todos os relatos atuais do local, conta os tipos de dificuldade e aplica as regras de análise. Se faltar confirmação da referência ou identificação da origem de um registro migrado, ele mostra o que deve ser completado.
+Locais com diferenças apenas de maiúsculas/minúsculas e espaços são reaproveitados. Descrições diferentes do mesmo endereço não são unificadas automaticamente. Para corrigir esse caso, mova o relato para o local correto.
+
+### 4. Excluir uma dificuldade
+
+Mostra diretamente a lista de dificuldades e pede confirmação antes da exclusão. Solicitações já preparadas conservam a cópia histórica do relato utilizado; somente a lista atual é alterada.
+
+### 5. Analisar um local e preparar solicitação
+
+Quando existe apenas um local, ele é selecionado automaticamente. Com vários locais, o programa apresenta uma lista simples para escolha.
+
+O programa reúne os relatos atuais do local, conta os tipos de dificuldade e aplica as regras de análise. Se faltar confirmação da referência ou identificação da origem de um registro migrado, ele mostra o que deve ser completado. A confirmação da referência é humana: o programa não verifica endereços em mapas.
 
 Quando as informações estão prontas, apresenta uma prévia da solicitação. Ao confirmar, salva o pedido com situação **Preparada**. O texto pode ser selecionado e copiado do terminal. Não é gerado um arquivo adicional de relatório.
 
-Se já existir um rascunho para aquele local, a análise atualiza esse rascunho após confirmação. Se nada mudou, apenas informa que o conteúdo já foi preparado. Assim, selecionar a opção repetidamente não cria pedidos duplicados.
+Se já existir um rascunho para aquele local, a análise atualiza esse rascunho após confirmação. Se nada mudou, apenas informa que o conteúdo já foi preparado. Um pedido encaminhado ou respondido conserva o texto original e deve ser consultado pela opção 6.
 
-Um pedido encaminhado ou respondido conserva o texto original. Nesse caso, a opção 3 apresenta o pedido existente e orienta acompanhar a solicitação na opção 4.
-
-### 4. Atualizar acompanhamento
+### 6. Atualizar acompanhamento de solicitação
 
 Apresenta o texto salvo e o histórico da solicitação. As ações disponíveis dependem da situação atual:
 
@@ -151,7 +160,7 @@ Apresenta o texto salvo e o histórico da solicitação. As ações disponíveis
 | Preparada | Registrar encaminhamento, encerrar ou adicionar observação. |
 | Encaminhada | Registrar resposta, encerrar ou adicionar observação. |
 | Resposta recebida | Encerrar ou adicionar observação. |
-| Encerrada | Consultar o texto e o histórico. Um novo pedido pode ser preparado na opção 3. |
+| Encerrada | Consultar o texto e o histórico. Um novo pedido pode ser preparado na opção 5. |
 
 Ao registrar encaminhamento de dados informados/documentais, o programa pergunta se o próprio usuário já fez o envio. O protocolo é opcional, pois pode não ter sido fornecido. Uma observação pode explicar o retorno ou o próximo passo. Para encerrar, a observação é obrigatória.
 
@@ -159,9 +168,9 @@ Receber uma resposta não encerra automaticamente o acompanhamento. Encerrar nã
 
 Há, no máximo, uma solicitação ativa por local. Esse limite ajuda a manter um acompanhamento claro. Novos relatos podem ser registrados enquanto o pedido está em andamento; o programa avisa quando o conteúdo atual difere do pedido anterior. Para um novo pedido, encerre o acompanhamento anterior com justificativa e prepare outro.
 
-### 5. Ver solicitações pendentes
+### 7. Ver painel geral e pendências
 
-Mostra a situação de cada local e uma próxima ação:
+Reúne em uma única tela o resumo geral e as próximas ações. O painel apresenta quantidades de locais, relatos e solicitações; agrupamentos por dificuldade, origem e situação; e a pendência de cada local.
 
 | Categoria | Significado |
 |---|---|
@@ -175,19 +184,7 @@ Mostra a situação de cada local e uma próxima ação:
 | Acompanhamento encerrado | A última solicitação foi encerrada e os dados atuais não mudaram. |
 | Sem relatos atuais | O local existe, mas não tem relatos atuais, por exemplo após uma exclusão. |
 
-Os locais aparecem na ordem de cadastro. Essa ordem não indica perigo, gravidade ou prioridade técnica. O painel também mostra solicitações encerradas e locais sem relatos para explicar o estado completo da base.
-
-### 6. Ver resumo geral do sistema
-
-Apresenta uma visão rápida da base atual:
-
-- Quantidade de locais cadastrados.
-- Quantidade total de relatos.
-- Quantidade de solicitações criadas e em acompanhamento.
-- Relatos agrupados por dificuldade e por origem.
-- Solicitações agrupadas pela situação atual.
-
-O resumo serve para organização e demonstração. As contagens não representam pessoas distintas, risco técnico ou melhorias realizadas na cidade.
+Os locais aparecem na ordem de cadastro. Essa ordem não indica perigo, gravidade ou prioridade técnica. As contagens servem para organização e demonstração; não representam pessoas distintas, risco técnico ou melhorias realizadas na cidade.
 
 ## Regras de análise e decisões do programa
 
@@ -223,10 +220,10 @@ Este roteiro usa um local e informações fictícios. Ele não foi inserido como
 
 1. Na opção 1, registre “O sinal fechou antes de eu terminar”, no local “Rua Exemplo, em frente ao mercado, Santana”. Escolha a frequência, deixe detalhes em branco se quiser e selecione **Exemplo fictício**.
 2. Registre uma segunda dificuldade no mesmo local: “A rampa estava ausente ou bloqueada”. Reutilize o local na lista e marque novamente **Exemplo fictício**.
-3. Na opção 3, selecione o local. Complete/confirme a referência quando solicitado.
+3. Na opção 5, analise o local. Complete/confirme a referência quando solicitado.
 4. Confira que o pedido reúne avaliação do tempo e das condições de acesso à faixa, com o aviso de demonstração.
-5. Confirme a preparação e consulte as pendências na opção 5.
-6. Na opção 4, registre o encaminhamento fictício para demonstrar o acompanhamento. Use um protocolo claramente fictício, como `TESTE-001`.
+5. Confirme a preparação e consulte o painel na opção 7.
+6. Na opção 6, registre o encaminhamento fictício para demonstrar o acompanhamento. Use um protocolo claramente fictício, como `TESTE-001`.
 7. Registre uma resposta de demonstração e depois encerre com uma justificativa.
 8. Feche e abra o programa. O texto e o histórico continuam disponíveis.
 
@@ -259,7 +256,7 @@ Os identificadores não são reutilizados após exclusões. Antes de ler ou grav
 
 A gravação primeiro escreve `dados.json.tmp` e depois substitui `dados.json`. Se a gravação falhar, a alteração não é aplicada à base em memória. O temporário pode permanecer após uma falha; o arquivo principal continua sendo a base utilizada pelo programa.
 
-Arquivos inválidos não são substituídos por uma base vazia: o programa informa o problema e encerra para preservar os dados. O programa foi projetado para uma pessoa usando uma instância por vez; não possui sincronização entre processos ou computadores. Uma cópia manual de `dados.json`, feita com o programa fechado, permite guardar um backup.
+Um arquivo vazio é considerado uma base nova. Um arquivo com conteúdo que não seja um JSON válido continua protegido: o programa informa o problema e encerra sem substituí-lo. O programa foi projetado para uma pessoa usando uma instância por vez; não possui sincronização entre processos ou computadores. Uma cópia manual de `dados.json`, feita com o programa fechado, permite guardar um backup.
 
 ### Compatibilidade com versões anteriores
 
@@ -308,81 +305,12 @@ Solicitações de demonstração aparecem separadas. Mesmo os registros informad
 
 Indicadores a avaliar com usuários incluem facilidade de concluir o cadastro, tempo para preparar uma solicitação e capacidade de encontrar pendências. Eles ainda não foram medidos em uso real. Melhorias efetivas nas travessias só poderiam ser apresentadas após verificação externa.
 
-## Limites da versão
-
-- Não determina se uma travessia é segura, irregular ou adequada tecnicamente.
-- Não calcula uma pontuação de perigo ou prioridade oficial.
-- Não identifica idade, deficiência ou velocidade de uma pessoa.
-- Não envia mensagens ou solicitações e não consulta canais públicos automaticamente.
-- Não verifica se uma fonte está atualizada ou se um relato é verdadeiro.
-- Não garante que um pedido terá resposta ou produzirá uma intervenção.
-- Não possui autenticação, criptografia da base, mapas, anexos ou funcionamento simultâneo para vários usuários.
-- A interface de terminal ainda precisa ser avaliada com o público que a utilizará.
-
-## Verificações realizadas
-
-Foram executados **21 testes automatizados** pelo assistente em pastas temporárias, cobrindo:
-
-- Agrupamento de relatos e regras específicas de avaliação.
-- Referência incompleta, confirmação e preparação de pedido.
-- Cancelamento, campos obrigatórios, origem pública e reutilização de local.
-- Rascunho salvo sem envio, ausência de duplicação e atualização do mesmo pedido.
-- Bloqueio do registro de envio de rascunho desatualizado.
-- Preservação do texto encaminhado após mudanças nos relatos.
-- Encaminhamento, resposta, encerramento e criação de novo pedido.
-- Rotulagem e contagem separada de demonstrações.
-- Correções, movimentação de relatos e exclusões com preservação histórica.
-- Migração dos dados anteriores, JSON inválido e falhas de gravação.
-- Nome antes do menu, exemplos apenas nos campos úteis, opções inválidas e fluxo completo com reinício.
-
-Os testes de desenvolvimento ficam fora dos cinco arquivos de entrega para manter um único arquivo Python no projeto. Não representam validação com moradores. O grupo deve executar o roteiro acima, conferir se os conteúdos usados foram estudados em aula e registrar os próprios resultados em `prompt.md` e `prompts.md`.
-
-## Problemas comuns
-
-| Situação | Como proceder |
-|---|---|
-| `python` não é reconhecido | Verifique a instalação do Python e tente `py passai.py` se o launcher estiver disponível. |
-| Erro de sintaxe em `match` | Execute com Python 3.10 ou superior. |
-| JSON inválido ao iniciar | Preserve o arquivo e restaure uma cópia válida ou corrija o conteúdo antes de continuar. |
-| Não foi possível salvar | Confira se há permissão de escrita na pasta e se o arquivo não está bloqueado. A operação não foi aplicada. |
-| Rascunho desatualizado | Use a opção 3 para revisar e preparar novamente antes de registrar envio. |
-| Origem não identificada | Corrija a origem do relato na opção 2. |
-| Não aparece um novo pedido para o mesmo local | Consulte a solicitação ativa na opção 4; finalize seu acompanhamento antes de criar outra. |
-
-## Próximos passos possíveis
-
-1. Validar o fluxo com pessoas afetadas e com quem organizaria os relatos.
-2. Revisar linguagem e quantidade de perguntas a partir dessa experiência.
-3. Definir um contrato comum para troca de dados com o site e implementar essa troca.
-4. Acrescentar datas e acompanhamento de prazos, caso isso se mostre necessário.
-5. Definir como verificar respostas e intervenções sem confundi-las com simples encerramento de solicitações.
-
-Esses itens são evolução prevista, não funcionalidades já disponíveis.
-
-## Materiais de referência e uso de IA
-
-A proposta foi baseada no briefing **Desafio FIAP GS CitizenTech — 1ES Paulista e Lins**, especialmente nas orientações gerais e nas páginas 29–32 sobre Python, e no documento central do **Travessia**, versão 0.2. A descrição do módulo Python no documento central precisa acompanhar a evolução para este assistente de avaliação cidadã.
-
-O briefing orienta compreender o problema com pessoas afetadas. O código e os testes automatizados não substituem essa validação. A equipe deve alinhar sua pesquisa ao enunciado e registrar com transparência o que realizou.
-
-O uso de ChatGPT/Codex no planejamento, implementação, documentação e testes está registrado em `prompt.md` e `prompts.md`. Cada integrante deve compreender o funcionamento e completar o registro com a revisão e os testes que efetivamente executar.
-
 ## Integrantes
 
 Preencher antes da entrega:
 
 | Nome completo | RM |
 |---|---|
-| A preencher | A preencher |
-
-## Preparação da entrega
-
-1. Preencher integrantes e endereço do repositório.
-2. Revisar a base para usar somente dados permitidos pelo briefing, com origem identificada.
-3. Executar o programa e conferir o roteiro de demonstração em uma cópia de teste.
-4. Atualizar os dois arquivos de registro de IA com as verificações reais do grupo.
-5. Compactar `passai.py`, `dados.json`, `readme.md`, `prompt.md` e `prompts.md` em um único ZIP.
-6. Não incluir `.git`, caches ou o temporário `dados.json.tmp`.
-7. Extrair o ZIP em outra pasta e conferir se `python passai.py` executa corretamente.
-
-O README descreve o comportamento implementado e seus limites; a submissão deve seguir as orientações atuais do professor da disciplina.
+| Rafael Taboada Sobral | 569527 |
+| Fabricio Denig De Avila | 570980 |
+| Beatriz Perigo| 569654 |

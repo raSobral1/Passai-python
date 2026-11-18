@@ -219,7 +219,12 @@ def migrar_versao_2(antiga):
 def carregar_dados(caminho):
     try:
         with caminho.open("r", encoding="utf-8-sig") as arquivo:
-            base = migrar_base(json.load(arquivo))
+            conteudo = arquivo.read().strip()
+
+        if not conteudo:
+            return nova_base()
+
+        base = migrar_base(json.loads(conteudo))
         validar_base(base)
         return base
     except FileNotFoundError:
@@ -332,8 +337,11 @@ def ler_nome():
         print("Digite seu nome para continuar.")
 
 
-def selecionar_local(base, permitir_novo=False):
+def selecionar_local(base, permitir_novo=False, selecionar_unico=False):
     locais = base["locais"]
+    if selecionar_unico and len(locais) == 1 and not permitir_novo:
+        print(f"\nLocal selecionado: {locais[0]['descricao']}")
+        return locais[0]
     opcoes = [item["descricao"] for item in locais]
     if permitir_novo:
         opcoes.append("Informar outro local")
@@ -400,7 +408,7 @@ def registrar_relato(base):
             nova["locais"] = base["locais"] + [local]
             nova["proximo_local_id"] += 1
         if aplicar_alteracao(base, nova):
-            print(f"Relato {relato['id']:03d} registrado. Analise o local na opção 3.")
+            print(f"Relato {relato['id']:03d} registrado. Analise o local na opção 5.")
 
 
 def exibir_relato(relato):
@@ -490,27 +498,51 @@ def completar_local(base, local):
     return None
 
 
-def consultar_relatos(base):
-    local = selecionar_local(base)
-    if local is None:
+def descricao_relato(base, relato):
+    local = buscar_por_id(base["locais"], relato["local_id"])
+    return f"Relato {relato['id']:03d} — {relato['dificuldade']} | {local['descricao']}"
+
+
+def listar_dificuldades(base):
+    exibir_titulo("DIFICULDADES CADASTRADAS")
+    if not base["relatos"]:
+        print("Nenhuma dificuldade cadastrada no momento.")
+        print("Use a opção 1 do menu principal para registrar.")
         return
-    while True:
-        relatos = relatos_do_local(base, local["id"])
-        opcoes = [f"Relato {r['id']:03d} — {r['dificuldade']} [{r['origem']}]" for r in relatos]
-        escolha = ler_opcao(f"RELATOS: {local['descricao']}", opcoes + ["Completar/corrigir referência do local"])
-        if escolha == 0:
-            return
-        if escolha == len(opcoes) + 1:
-            local = completar_local(base, local) or local
-            continue
-        relato = relatos[escolha - 1]
-        exibir_relato(relato)
-        acao = ler_opcao("O que deseja fazer?", ("Corrigir relato", "Excluir relato"))
-        match acao:
-            case 1:
-                corrigir_relato(base, relato)
-            case 2:
-                excluir_relato(base, relato)
+
+    for relato in base["relatos"]:
+        local = buscar_por_id(base["locais"], relato["local_id"])
+        print(f"\nRelato {relato['id']:03d}")
+        print(f"  Local: {local['descricao']}")
+        print(f"  Dificuldade: {relato['dificuldade']}")
+        print(f"  Frequência: {relato['frequencia']}")
+        print(f"  Origem: {relato['origem']}")
+        print(f"  Detalhes: {relato['detalhes'] or 'Não informados'}")
+
+
+def selecionar_relato(base, titulo):
+    if not base["relatos"]:
+        print("\nNenhuma dificuldade cadastrada no momento.")
+        return None
+    opcoes = [descricao_relato(base, relato) for relato in base["relatos"]]
+    escolha = ler_opcao(titulo, opcoes)
+    return None if escolha == 0 else base["relatos"][escolha - 1]
+
+
+def alterar_dificuldade(base):
+    relato = selecionar_relato(base, "ESCOLHA A DIFICULDADE QUE DESEJA ALTERAR")
+    if relato is None:
+        return
+    exibir_relato(relato)
+    corrigir_relato(base, relato)
+
+
+def excluir_dificuldade(base):
+    relato = selecionar_relato(base, "ESCOLHA A DIFICULDADE QUE DESEJA EXCLUIR")
+    if relato is None:
+        return
+    exibir_relato(relato)
+    excluir_relato(base, relato)
 
 
 def excluir_relato(base, relato):
@@ -537,7 +569,7 @@ def analisar_local(base, local):
         if ponto not in pontos:
             pontos.append(ponto)
         if relato["origem"] == "Não identificada":
-            pendencias.append(f"Identificar a origem do relato {relato['id']:03d} na opção 2.")
+            pendencias.append(f"Identificar a origem do relato {relato['id']:03d} na opção 3.")
     return {"relatos": relatos, "pontos": pontos, "pendencias": pendencias, "contagem": contagem}
 
 
@@ -583,7 +615,7 @@ def exibir_pedido(pedido):
 
 
 def preparar_solicitacao(base):
-    local = selecionar_local(base)
+    local = selecionar_local(base, selecionar_unico=True)
     if local is None:
         return
     analise = analisar_local(base, local)
@@ -594,7 +626,7 @@ def preparar_solicitacao(base):
         print(f"Pedido sugerido: {ponto}")
     ativo = solicitacao_ativa(base, local["id"])
     if ativo is not None and ativo["situacao"] != "Preparada":
-        print("Já existe solicitação encaminhada ou respondida. Acompanhe-a na opção 4.")
+        print("Já existe solicitação encaminhada ou respondida. Acompanhe-a na opção 6.")
         if not conteudo_atualizado(base, ativo):
             print("Há alterações nos relatos/local que não constam no texto anteriormente preparado.")
         exibir_pedido(ativo)
@@ -611,7 +643,7 @@ def preparar_solicitacao(base):
     texto = gerar_solicitacao(local, analise)
     print("\nPRÉVIA DO PEDIDO\n" + texto)
     if ativo is not None and conteudo_atualizado(base, ativo):
-        print(f"Este conteúdo já está salvo na solicitação {ativo['id']:03d}. Registre o envio na opção 4 após encaminhá-lo.")
+        print(f"Este conteúdo já está salvo na solicitação {ativo['id']:03d}. Registre o envio na opção 6 após encaminhá-lo.")
         return
     if not confirmar("Salvar o pedido como preparado" + (", atualizando o rascunho existente?" if ativo else "?")):
         return
@@ -630,7 +662,7 @@ def preparar_solicitacao(base):
 
 def atualizar_andamento(base):
     if not base["solicitacoes"]:
-        print("Nenhuma solicitação preparada. Use a opção 3 primeiro.")
+        print("Nenhuma solicitação preparada. Use a opção 5 primeiro.")
         return
     escolha = ler_opcao("Escolha uma solicitação:", [f"{p['id']:03d} — {p['local_descricao']} | {p['situacao']}" for p in base["solicitacoes"]])
     if escolha == 0:
@@ -640,7 +672,7 @@ def atualizar_andamento(base):
     for numero, evento in enumerate(pedido["historico"], start=1):
         print(f"{numero}. {evento['situacao']} | Protocolo: {evento['protocolo'] or 'Não informado'} | {evento['observacao']}")
     if pedido["situacao"] == "Encerrada":
-        print("Histórico encerrado. Se necessário, prepare uma nova solicitação na opção 3.")
+        print("Histórico encerrado. Se necessário, prepare uma nova solicitação na opção 5.")
         return
     destinos = TRANSICOES_SITUACAO[pedido["situacao"]]
     opcoes = [f"Registrar: {estado}" for estado in destinos] + ["Adicionar observação sem mudar a situação"]
@@ -650,7 +682,7 @@ def atualizar_andamento(base):
     situacao = destinos[acao - 1] if acao <= len(destinos) else pedido["situacao"]
     if situacao == "Encaminhada" and pedido["situacao"] == "Preparada":
         if not conteudo_atualizado(base, pedido):
-            print("O rascunho está desatualizado. Revise e prepare o texto atual na opção 3 antes do envio.")
+            print("O rascunho está desatualizado. Revise e prepare o texto atual na opção 5 antes do envio.")
             return
         ficticio = any(r["origem"] == "Exemplo fictício" for r in pedido["relatos_snapshot"])
         pergunta = "Registrar encaminhamento fictício somente para testar o acompanhamento?" if ficticio else "Você já encaminhou esse texto pelo canal de atendimento escolhido?"
@@ -684,43 +716,31 @@ def classificar_pendencia(base, local):
         return "Sem relatos atuais", "Cadastre uma dificuldade na opção 1, se necessário."
     encerradas = [p for p in base["solicitacoes"] if p["local_id"] == local["id"] and p["situacao"] == "Encerrada"]
     if encerradas and conteudo_atualizado(base, encerradas[-1]):
-        return "Acompanhamento encerrado", "Consulte o histórico na opção 4; nova solicitação pode ser preparada se necessário."
+        return "Acompanhamento encerrado", "Consulte o histórico na opção 6; nova solicitação pode ser preparada se necessário."
     if analise["pendencias"]:
         return "Informações a completar", " ".join(analise["pendencias"])
-    return "Pedido a preparar", "Analise o local e prepare a solicitação na opção 3."
+    return "Pedido a preparar", "Analise o local e prepare a solicitação na opção 5."
 
 
 def classificar_solicitacao_ativa(base, pedido, analise):
     match pedido["situacao"]:
         case "Preparada" if analise["pendencias"] or not conteudo_atualizado(base, pedido):
-            return "Revisar rascunho", "Atualize informações e prepare novamente na opção 3."
+            return "Revisar rascunho", "Atualize informações e prepare novamente na opção 5."
         case "Preparada" if any(r["origem"] == "Exemplo fictício" for r in analise["relatos"]):
-            return "Demonstração", "Pedido fictício preparado; teste o acompanhamento na opção 4, sem envio real."
+            return "Demonstração", "Pedido fictício preparado; teste o acompanhamento na opção 6, sem envio real."
         case "Preparada":
-            return "Aguardando encaminhamento", "Copie o pedido e, após o envio, registre o andamento na opção 4."
+            return "Aguardando encaminhamento", "Copie o pedido e, após o envio, registre o andamento na opção 6."
         case "Encaminhada":
-            return "Aguardando resposta", "Consulte o atendimento com o protocolo e registre o retorno na opção 4."
+            return "Aguardando resposta", "Consulte o atendimento com o protocolo e registre o retorno na opção 6."
         case "Resposta recebida":
-            return "Resposta a avaliar", "Leia o retorno e registre o próximo passo ou encerramento na opção 4."
-
-
-def contar_solicitacoes(solicitacoes, situacao):
-    contagem = {"informadas": 0, "demonstracao": 0}
-    for pedido in solicitacoes:
-        if pedido["situacao"] != situacao:
-            continue
-        chave = "demonstracao" if any(
-            relato["origem"] == "Exemplo fictício" for relato in pedido["relatos_snapshot"]
-        ) else "informadas"
-        contagem[chave] += 1
-    return contagem
+            return "Resposta a avaliar", "Leia o retorno e registre o próximo passo ou encerramento na opção 6."
 
 
 def exibir_pendencias(base):
+    exibir_titulo("PENDÊNCIAS E PRÓXIMOS PASSOS")
     if not base["locais"]:
         print("Ainda não há relatos. Comece pela opção 1.")
         return
-    print("\nPENDÊNCIAS E PRÓXIMOS PASSOS POR LOCAL")
     print("A ordem é a de cadastro; não representa prioridade de risco.")
     for local in base["locais"]:
         categoria, acao = classificar_pendencia(base, local)
@@ -732,12 +752,6 @@ def exibir_pendencias(base):
                 print("DEMONSTRAÇÃO: este acompanhamento contém dados fictícios.")
             if ativo["situacao"] != "Preparada" and not conteudo_atualizado(base, ativo):
                 print("Há alterações nos dados atuais que não estão no texto já encaminhado.")
-    print("\nINDICADORES DE ACOMPANHAMENTO")
-    for situacao in SITUACOES:
-        contagem = contar_solicitacoes(base["solicitacoes"], situacao)
-        print(f"{situacao}: {contagem['informadas']} informada(s)/documental(is) | "
-              f"{contagem['demonstracao']} de demonstração")
-    print("Contagens de solicitações por situação atual; não medem pessoas beneficiadas nem melhorias verificadas.")
 
 
 def contar_por_campo(registros, campo, opcoes):
@@ -787,6 +801,12 @@ def exibir_resumo_geral(base):
     print("nem comprovam melhorias realizadas nas travessias.")
 
 
+def exibir_painel_geral(base):
+    """Reúne os indicadores e as próximas ações em uma única opção."""
+    exibir_resumo_geral(base)
+    exibir_pendencias(base)
+
+
 def main():
     exibir_titulo("PASSAÍ — APOIO À ACESSIBILIDADE NAS TRAVESSIAS")
     print("Relate dificuldades, prepare pedidos e acompanhe o retorno.".center(LARGURA_TELA))
@@ -801,23 +821,29 @@ def main():
     try:
         while True:
             opcao = ler_opcao(f"MENU PRINCIPAL — {nome}", (
-                "Registrar uma dificuldade", "Consultar relatos de um local",
-                "Analisar relatos e preparar solicitação", "Atualizar acompanhamento",
-                "Ver solicitações pendentes", "Ver resumo geral do sistema",
+                "Registrar uma dificuldade",
+                "Ver dificuldades cadastradas",
+                "Alterar uma dificuldade",
+                "Excluir uma dificuldade",
+                "Analisar um local e preparar solicitação",
+                "Atualizar acompanhamento de solicitação",
+                "Ver painel geral e pendências",
             ), voltar="Sair")
             match opcao:
                 case 1:
                     registrar_relato(base)
                 case 2:
-                    consultar_relatos(base)
+                    listar_dificuldades(base)
                 case 3:
-                    preparar_solicitacao(base)
+                    alterar_dificuldade(base)
                 case 4:
-                    atualizar_andamento(base)
+                    excluir_dificuldade(base)
                 case 5:
-                    exibir_pendencias(base)
+                    preparar_solicitacao(base)
                 case 6:
-                    exibir_resumo_geral(base)
+                    atualizar_andamento(base)
+                case 7:
+                    exibir_painel_geral(base)
                 case 0:
                     exibir_titulo("ATÉ LOGO", "-")
                     print("Alterações confirmadas foram salvas.")
