@@ -134,14 +134,20 @@ py passai.py
 Passai-python/
 ├── passai.py
 ├── dados.json
-└── readme.md
+├── readme.md
+└── prompts.md
 ```
 
 - `passai.py`: contém todo o código da aplicação.
 - `dados.json`: guarda os locais, dificuldades, pedidos e históricos.
 - `readme.md`: apresenta e explica o projeto.
+- `prompts.md`: documenta como a Inteligência Artificial foi utilizada durante o desenvolvimento.
 
-O arquivo de documentação do uso de Inteligência Artificial será adicionado posteriormente, de acordo com as instruções da disciplina.
+## Uso de Inteligência Artificial
+
+A equipe utilizou o Codex, da OpenAI, como ferramenta de apoio para organizar ideias, revisar o código, sugerir melhorias, gerar cenários de teste e auxiliar na documentação.
+
+As sugestões foram analisadas, testadas e ajustadas pela equipe antes de serem incorporadas. Os prompts utilizados, as funcionalidades que receberam auxílio, o processo de verificação e uma análise crítica estão documentados em `prompts.md`.
 
 ## Salvamento dos dados
 
@@ -158,7 +164,7 @@ Se `dados.json` não existir ou estiver vazio, o Passaí começa normalmente sem
 
 Antes de salvar, o programa verifica se os campos, identificadores e relações entre os registros são válidos. A gravação utiliza primeiro um arquivo temporário e somente depois substitui o JSON principal. Isso reduz o risco de perder os dados caso ocorra uma falha durante a escrita.
 
-## Perguntas que o grupo deve saber responder
+## Perguntas sobre o sistema
 
 ### Como os dados são carregados e salvos?
 
