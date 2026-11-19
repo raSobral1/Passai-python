@@ -219,12 +219,6 @@ O JSON atende ao requisito da disciplina e é suficiente para uma aplicação lo
 | Dicionários | Representação dos registros e das regras de análise. |
 | JSON | Persistência dos dados entre as execuções. |
 
-## Cuidados com as informações
-
-O Passaí não acessa mapas, não verifica fontes públicas automaticamente e não envia pedidos para órgãos externos. As informações são registradas conforme foram fornecidas pelo usuário.
-
-Para demonstrações acadêmicas, recomenda-se utilizar dados fictícios ou públicos e evitar dados pessoais. Exemplos fictícios são identificados no texto para que não sejam confundidos com relatos reais.
-
 ## Roteiro curto de demonstração
 
 1. Inicie o programa e informe um nome.
