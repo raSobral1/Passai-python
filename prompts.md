@@ -114,10 +114,6 @@ Ao final, foram executados **28 testes automatizados**, além das verificações
 
 A IA ajudou a transformar ideias gerais em alternativas mais concretas, sugeriu formas de organizar o código e chamou atenção para casos que poderiam ser esquecidos, como JSON vazio, falha de gravação e cancelamento de operações. Também acelerou a criação de testes e a revisão da documentação.
 
-### Dificuldades encontradas
-
-A principal dificuldade foi equilibrar uma solução completa com uma navegação simples para o usuário. Foram necessárias várias revisões dos textos, das opções do menu e das funções. Outro cuidado foi manter somente recursos compatíveis com a disciplina e garantir que o grupo conseguisse compreender e explicar a solução.
-
 ### Reflexão final
 
 O uso da IA foi positivo como apoio ao raciocínio, à programação e aos testes, mas não substituiu as decisões da equipe. A qualidade do resultado dependeu de perguntas claras, revisão humana, execução do programa e ajustes feitos a partir dos problemas encontrados.

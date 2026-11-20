@@ -1,9 +1,62 @@
 {
   "versao": 3,
-  "proximo_local_id": 1,
-  "proximo_relato_id": 1,
-  "proxima_solicitacao_id": 1,
-  "locais": [],
-  "relatos": [],
-  "solicitacoes": []
+  "proximo_local_id": 3,
+  "proximo_relato_id": 2,
+  "proxima_solicitacao_id": 2,
+  "locais": [
+    {
+      "id": 1,
+      "descricao": "Avenida Cruzeiro do sul, perto do metro santana",
+      "referencia_confirmada": true
+    },
+    {
+      "id": 2,
+      "descricao": "Avenida Cruzeiro do Sul, próximo ao Metrô Santana",
+      "referencia_confirmada": false
+    }
+  ],
+  "relatos": [
+    {
+      "id": 1,
+      "local_id": 2,
+      "dificuldade": "O sinal fechou antes de eu terminar",
+      "frequencia": "Mais de uma vez",
+      "detalhes": "Acontece sempre em horario de pico, por volta das 18hrs",
+      "origem": "Relato informado",
+      "fonte": ""
+    }
+  ],
+  "solicitacoes": [
+    {
+      "id": 1,
+      "local_id": 1,
+      "situacao": "Encaminhada",
+      "protocolo": "",
+      "historico": [
+        {
+          "situacao": "Preparada",
+          "protocolo": "",
+          "observacao": "Solicitação preparada, ainda não encaminhada."
+        },
+        {
+          "situacao": "Encaminhada",
+          "protocolo": "",
+          "observacao": "Envio registrado pelo usuário."
+        }
+      ],
+      "local_descricao": "Avenida Cruzeiro do sul, perto do metro santana",
+      "relatos_snapshot": [
+        {
+          "id": 1,
+          "local_id": 1,
+          "dificuldade": "O sinal fechou antes de eu terminar",
+          "frequencia": "Mais de uma vez",
+          "detalhes": "Acontece sempre em horario se pico, por volta das 18hrs",
+          "origem": "Relato informado",
+          "fonte": ""
+        }
+      ],
+      "texto": "SOLICITAÇÃO DE AVALIAÇÃO DE ACESSIBILIDADE\nLocal informado: Avenida Cruzeiro do sul, perto do metro santana\nRegistros relacionados: 1 (não equivalem a pessoas distintas).\n\nDificuldades informadas:\n- Relato 001: O sinal fechou antes de eu terminar. Frequência informada: Mais de uma vez.\n  Origem: Relato informado.\n  Detalhes: Acontece sempre em horario se pico, por volta das 18hrs\n\nSolicita-se:\n- Avaliação do tempo destinado à travessia de pedestres.\n\nAs informações são relatos sem verificação ou medição técnica pelo Passaí. Não constituem laudo nem avaliação de legalidade."
+    }
+  ]
 }

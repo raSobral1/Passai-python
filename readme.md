@@ -162,6 +162,14 @@ O arquivo `dados.json` permite continuar o trabalho depois que o programa é fec
 
 Se `dados.json` não existir ou estiver vazio, o Passaí começa normalmente sem nenhum cadastro. O arquivo recebe a estrutura necessária quando a primeira alteração é confirmada.
 
+### Exemplo demonstrativo incluído
+
+O projeto é entregue com um exemplo já cadastrado em `dados.json`. Esse conteúdo demonstra o fluxo completo do sistema: um local de travessia, uma dificuldade relatada e um pedido de melhoria preparado e acompanhado.
+
+O exemplo foi mantido para que o professor possa iniciar o programa e entender rapidamente como os dados aparecem nas consultas, no painel e no acompanhamento das solicitações. Ele serve apenas como demonstração do funcionamento e não representa uma avaliação técnica realizada pelo Passaí.
+
+Caso seja necessário testar o sistema desde o início, a opção `8` do menu exclui todos os registros e reinicia o arquivo de dados. O programa também funciona normalmente quando `dados.json` está vazio ou ainda não existe.
+
 Antes de salvar, o programa verifica se os campos, identificadores e relações entre os registros são válidos. A gravação utiliza primeiro um arquivo temporário e somente depois substitui o JSON principal. Isso reduz o risco de perder os dados caso ocorra uma falha durante a escrita.
 
 ## Perguntas sobre o sistema
